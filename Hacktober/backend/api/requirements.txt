@@ -1,0 +1,62 @@
+# FastAPI and Server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Google Gemini AI
+google-genai==0.2.2
+
+# Async HTTP Client
+aiohttp==3.9.1
+httpx==0.26.0
+
+# ML Model Dependencies
+scikit-learn==1.7.1
+numpy==1.26.3
+pandas==2.2.0
+
+# NLP & Text Processing
+nltk==3.8.1
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# OCR (Image to Text)
+pytesseract==0.3.10
+Pillow==10.2.0
+opencv-python==4.9.0.80
+
+# Web Scraping
+beautifulsoup4==4.12.3
+lxml==5.1.0
+boilerpy3==1.0.7
+playwright==1.41.0
+requests==2.31.0
+
+# Social Media APIs
+tweepy==4.14.0
+praw==7.7.1
+
+# Language Detection
+langdetect==1.0.9
+
+# Voice Processing
+elevenlabs==2.20.1
+
+# PDF Processing (optional)
+PyPDF2==3.0.1
+
+# Rate Limiting
+aiolimiter==1.1.0
+
+# Logging
+colorlog==6.8.0
+
+# Data Validation
+pydantic==2.5.3
+
+# Testing (optional)
+pytest==8.0.0
+pytest-asyncio==0.23.3
+
+# CORS - Using FastAPI's built-in middleware (no external package needed)

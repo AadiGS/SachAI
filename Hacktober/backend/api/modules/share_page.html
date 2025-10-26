@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share News Verification - Sach.ai</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .result-section {
+            margin-bottom: 30px;
+        }
+        
+        .news-text {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .news-text h3 {
+            color: #374151;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .news-text p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        .verdict {
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .verdict.fake {
+            background: #fee2e2;
+            border-left: 5px solid #ef4444;
+        }
+        
+        .verdict.real {
+            background: #dcfce7;
+            border-left: 5px solid #22c55e;
+        }
+        
+        .verdict h3 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        
+        .verdict.fake h3 {
+            color: #991b1b;
+        }
+        
+        .verdict.real h3 {
+            color: #166534;
+        }
+        
+        .verdict p {
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        .share-section {
+            text-align: center;
+        }
+        
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        
+        .whatsapp-btn:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+        }
+        
+        .whatsapp-icon {
+            font-size: 24px;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-align: center;
+            display: none;
+        }
+        
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            display: block;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block;
+        }
+        
+        .preview {
+            background: #f9fafb;
+            border: 2px dashed #d1d5db;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .preview h4 {
+            color: #374151;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        
+        .preview pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #1f2937;
+            font-family: inherit;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Share Verification Result</h1>
+        
+        <div class="result-section">
+            <div class="news-text">
+                <h3>📰 News/Claim:</h3>
+                <p id="newsText">Loading...</p>
+            </div>
+            
+            <div class="verdict" id="verdict">
+                <h3 id="verdictTitle"></h3>
+                <p id="verdictDescription"></p>
+            </div>
+        </div>
+        
+        <div class="preview">
+            <h4>📝 Message Preview:</h4>
+            <pre id="messagePreview"></pre>
+        </div>
+        
+        <div class="share-section">
+            <button class="whatsapp-btn" id="shareBtn">
+                <span class="whatsapp-icon">📱</span>
+                Share on WhatsApp
+            </button>
+            <div class="status" id="status"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8001';
+        
+        const newsText = document.getElementById('newsText');
+        const verdict = document.getElementById('verdict');
+        const verdictTitle = document.getElementById('verdictTitle');
+        const verdictDescription = document.getElementById('verdictDescription');
+        const messagePreview = document.getElementById('messagePreview');
+        const shareBtn = document.getElementById('shareBtn');
+        const status = document.getElementById('status');
+
+        let outputData = null;
+
+        function showStatus(message, type) {
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        // Load data from output.json via API
+        async function loadData() {
+            try {
+                const response = await fetch(`${API_URL}/api/v1/get_output`);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load data: ${response.status}`);
+                }
+                
+                outputData = await response.json();
+                displayResults(outputData);
+            } catch (error) {
+                showStatus('Error loading verification data. Please try again.', 'error');
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function displayResults(data) {
+            const newsContent = data.text || 'No news text available';
+            const isFake = data.label === 0;
+            const description = data.description || 'No description available';
+            
+            // Display news text
+            newsText.textContent = newsContent;
+            
+            // Display verdict
+            verdict.className = `verdict ${isFake ? 'fake' : 'real'}`;
+            verdictTitle.textContent = isFake ? '❌ FAKE NEWS' : '✅ VERIFIED AS REAL';
+            verdictDescription.textContent = description;
+            
+            // Generate and show message preview
+            const message = generateWhatsAppMessage(newsContent, isFake, description);
+            messagePreview.textContent = message;
+        }
+
+        function generateWhatsAppMessage(news, isFake, description) {
+            const status = isFake ? 'FAKE' : 'REAL';
+            
+            // Format message exactly as specified
+            const message = `*The news "${news}"*
+
+*is ${status}.*
+
+*Description:* ${description}
+
+*Verified by Sach.ai*`;
+            
+            return message;
+        }
+
+        shareBtn.addEventListener('click', () => {
+            if (!outputData) {
+                showStatus('Please wait, loading data...', 'info');
+                return;
+            }
+            
+            const news = outputData.text || '';
+            const isFake = outputData.label === 0;
+            const description = outputData.description || '';
+            
+            // Generate the formatted message
+            const message = generateWhatsAppMessage(news, isFake, description);
+            
+            // Encode message for URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Create WhatsApp share URL
+            const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
+            
+            // Open WhatsApp
+            window.open(whatsappURL, '_blank');
+            
+            showStatus('Opening WhatsApp...', 'info');
+        });
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+# ========================================
+# FAKE NEWS DETECTION SYSTEM
+# API Keys Configuration Template
+# ========================================
+
+# Copy contents to .env file and fill in your API keys
+# DO NOT commit .env to version control!
+
+# ========================================
+# GOOGLE GEMINI AI (Required for summarization + verdict)
+# Get key: https://makersuite.google.com/app/apikey
+# ========================================
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# ========================================
+# GOOGLE FACT CHECK API (Optional but recommended)
+# Get key: https://console.cloud.google.com/apis/credentials
+# Enable: Fact Check Tools API
+# ========================================
+GOOGLE_FACTCHECK_API_KEY=your_google_factcheck_key_here
+
+# ========================================
+# NEWS API (Optional but recommended)
+# Get key: https://newsapi.org/register
+# Free tier: 100 requests/day
+# ========================================
+NEWS_API_KEY=your_news_api_key_here
+
+# ========================================
+# TWITTER / X API (Optional)
+# Get keys: https://developer.twitter.com/en/portal/dashboard
+# Note: Free tier is very limited, scraping fallback available
+# ========================================
+TWITTER_API_KEY=your_twitter_api_key
+TWITTER_API_SECRET=your_twitter_api_secret
+TWITTER_BEARER_TOKEN=your_twitter_bearer_token
+TWITTER_ACCESS_TOKEN=your_twitter_access_token
+TWITTER_ACCESS_TOKEN_SECRET=your_twitter_access_token_secret
+
+# ========================================
+# TAVILY API (Twitter scraping fallback)
+# Get key: https://tavily.com/
+# ========================================
+TAVILY_API_KEY=your_tavily_api_key_here
+
+# ========================================
+# REDDIT API (Optional)
+# Get keys: https://www.reddit.com/prefs/apps
+# ========================================
+REDDIT_CLIENT_ID=your_reddit_client_id
+REDDIT_CLIENT_SECRET=your_reddit_client_secret
+
+# ========================================
+# ELEVENLABS VOICE API (Optional - for voice input/output)
+# Get key: https://elevenlabs.io/
+# ========================================
+ELEVENLABS_API_KEY=your_elevenlabs_api_key_here
+ELEVENLABS_TTS_VOICE_ID=your_preferred_voice_id  # Optional (has default)
+
+# ========================================
+# NOTES:
+# ========================================
+# REQUIRED for full functionality:
+#   - GEMINI_API_KEY (for summarization and verdict aggregation)
+#
+# RECOMMENDED (improves accuracy):
+#   - GOOGLE_FACTCHECK_API_KEY
+#   - NEWS_API_KEY
+#
+# OPTIONAL (enhances with social verification):
+#   - TWITTER_* keys or TAVILY_API_KEY
+#   - REDDIT_* keys
+#   - ELEVENLABS_* keys (only if using voice features)
+#
+# System will work with missing keys but skip those verification sources
+# ========================================
+

@@ -1,0 +1,55 @@
+# ========================================
+# SETUP INSTRUCTIONS - READY TO RUN
+# ========================================
+
+Your API key has been configured!
+
+## Quick Start (3 commands):
+
+### 1. Create .env file with API key:
+
+Run this command in PowerShell:
+
+cd D:\Hackathons\Hacktober\backend\api
+echo "GEMINI_API_KEY=AIzaSyAMP3Ml_o6QPxf008GC0qHJ92etMyqGy5U" > .env
+
+### 2. Install dependencies:
+
+pip install -r requirements.txt
+
+### 3. Start the server:
+
+python main.py
+
+## That's it! ✅
+
+Server will start at: http://localhost:8000
+API Docs at: http://localhost:8000/docs
+
+## Frontend is already running at:
+
+http://localhost:8080
+
+## Test it now!
+
+1. Open http://localhost:8080
+2. Click "Try AI Detector"
+3. Enter any news text
+4. Click "Analyze"
+5. Wait 15-25 seconds for results!
+
+## What's been updated:
+
+✅ Gemini API updated to use gemini-2.0-flash-exp model
+✅ Using new Google GenAI SDK (google-genai package)
+✅ Your API key ready to use
+✅ Requirements.txt updated with google-genai
+
+## Model being used:
+
+Model: gemini-2.0-flash-exp (Latest Gemini model)
+API: Google GenAI SDK
+Package: google-genai==0.2.2
+
+========================================
+

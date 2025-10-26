@@ -1,0 +1,92 @@
+[
+  {
+    "text": "The United Nations Climate Change Conference concluded today with representatives from 195 countries agreeing to reduce carbon emissions by 2030.",
+    "flag": 1,
+    "prediction": "Real News",
+    "confidence": {
+      "fake": 48.46,
+      "real": 51.54
+    }
+  },
+  {
+    "text": "DOCTORS SHOCKED! This one weird trick melts belly fat overnight! Big Pharma doesn't want you to know!",
+    "flag": 1,
+    "prediction": "Real News",
+    "confidence": {
+      "fake": 8.25,
+      "real": 91.75
+    }
+  },
+  {
+    "text": "Apple Inc announced its quarterly earnings today, reporting revenue of 89.5 billion dollars.",
+    "flag": 1,
+    "prediction": "Real News",
+    "confidence": {
+      "fake": 21.82,
+      "real": 78.18
+    }
+  },
+  {
+    "text": "BREAKING: Aliens have landed in New York City! The government is hiding the truth!",
+    "flag": 1,
+    "prediction": "Real News",
+    "confidence": {
+      "fake": 14.34,
+      "real": 85.66
+    }
+  },
+  {
+    "text": "The Federal Reserve kept its benchmark interest rate unchanged at today's meeting.",
+    "flag": 1,
+    "prediction": "Real News",
+    "confidence": {
+      "fake": 18.5,
+      "real": 81.5
+    }
+  },
+  {
+    "text": "Scientists have made remarkable progress in developing new treatments for Alzheimer's disease.",
+    "flag": 1,
+    "prediction": "Real News",
+    "confidence": {
+      "fake": 24.85,
+      "real": 75.15
+    }
+  },
+  {
+    "text": "Your computer has a VIRUS! Download this software NOW or lose all your files!",
+    "flag": 1,
+    "prediction": "Real News",
+    "confidence": {
+      "fake": 9.56,
+      "real": 90.44
+    }
+  },
+  {
+    "text": "The World Health Organization released new guidelines for childhood vaccination schedules.",
+    "flag": 1,
+    "prediction": "Real News",
+    "confidence": {
+      "fake": 20.72,
+      "real": 79.28
+    }
+  },
+  {
+    "text": "SHOCKING truth about vaccines revealed! Bill Gates secret plan exposed!",
+    "flag": 1,
+    "prediction": "Real News",
+    "confidence": {
+      "fake": 3.58,
+      "real": 96.42
+    }
+  },
+  {
+    "text": "The Supreme Court heard oral arguments today in a case concerning data privacy.",
+    "flag": 1,
+    "prediction": "Real News",
+    "confidence": {
+      "fake": 20.32,
+      "real": 79.68
+    }
+  }
+]

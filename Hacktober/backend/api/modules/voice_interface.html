@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Fake News Detector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .record-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        #recordBtn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        #recordBtn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        #recordBtn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        #recordBtn.recording {
+            background: #ef4444;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-align: center;
+            display: none;
+        }
+        
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            display: block;
+        }
+        
+        .status.success {
+            background: #dcfce7;
+            color: #166534;
+            display: block;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block;
+        }
+        
+        .result-section {
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .result-section.show {
+            display: block;
+        }
+        
+        .transcription {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .transcription h3 {
+            color: #374151;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .transcription p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        .verdict {
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .verdict.fake {
+            background: #fee2e2;
+            border-left: 5px solid #ef4444;
+        }
+        
+        .verdict.real {
+            background: #dcfce7;
+            border-left: 5px solid #22c55e;
+        }
+        
+        .verdict h3 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        
+        .verdict.fake h3 {
+            color: #991b1b;
+        }
+        
+        .verdict.real h3 {
+            color: #166534;
+        }
+        
+        .verdict p {
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        .audio-player {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        
+        .loader.show {
+            display: block;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 Voice Fake News Detector</h1>
+        
+        <div class="record-section">
+            <button id="recordBtn">🎤 Start Recording</button>
+            <div class="loader" id="loader"></div>
+            <div class="status" id="status"></div>
+        </div>
+        
+        <div class="result-section" id="resultSection">
+            <div class="transcription">
+                <h3>📝 Your Statement:</h3>
+                <p id="transcriptionText"></p>
+            </div>
+            
+            <div class="verdict" id="verdict">
+                <h3 id="verdictTitle"></h3>
+                <p id="verdictDescription"></p>
+            </div>
+            
+            <div class="audio-player">
+                <p><strong>🔊 Listen to the Analysis:</strong></p>
+                <audio id="audioPlayer" controls></audio>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        const recordBtn = document.getElementById('recordBtn');
+        const status = document.getElementById('status');
+        const loader = document.getElementById('loader');
+        const resultSection = document.getElementById('resultSection');
+        const transcriptionText = document.getElementById('transcriptionText');
+        const verdict = document.getElementById('verdict');
+        const verdictTitle = document.getElementById('verdictTitle');
+        const verdictDescription = document.getElementById('verdictDescription');
+        const audioPlayer = document.getElementById('audioPlayer');
+
+        const API_URL = 'http://127.0.0.1:8000';
+
+        function showStatus(message, type) {
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function showLoader(show) {
+            loader.className = show ? 'loader show' : 'loader';
+        }
+
+        recordBtn.addEventListener('click', async () => {
+            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+                // Start recording
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                        await processAudio(audioBlob);
+                        
+                        // Stop all tracks
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    recordBtn.textContent = '⏹️ Stop Recording';
+                    recordBtn.classList.add('recording');
+                    showStatus('Recording... Speak now!', 'info');
+                    resultSection.classList.remove('show');
+                } catch (error) {
+                    showStatus('Error: Could not access microphone', 'error');
+                    console.error('Error accessing microphone:', error);
+                }
+            } else {
+                // Stop recording
+                mediaRecorder.stop();
+                recordBtn.textContent = '🎤 Start Recording';
+                recordBtn.classList.remove('recording');
+                recordBtn.disabled = true;
+                showStatus('Processing your audio...', 'info');
+                showLoader(true);
+            }
+        });
+
+        async function processAudio(audioBlob) {
+            try {
+                const formData = new FormData();
+                formData.append('audio_blob', audioBlob, 'voice.mp3');
+
+                const response = await fetch(`${API_URL}/api/v1/process_voice`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                displayResults(result);
+                
+                showStatus('Analysis complete!', 'success');
+                showLoader(false);
+                recordBtn.disabled = false;
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+                showLoader(false);
+                recordBtn.disabled = false;
+                console.error('Error processing audio:', error);
+            }
+        }
+
+        function displayResults(result) {
+            // Show transcription
+            transcriptionText.textContent = result.transcribed_text || 'No transcription available';
+            
+            // Show verdict
+            const isFake = result.label === 0;
+            verdict.className = `verdict ${isFake ? 'fake' : 'real'}`;
+            verdictTitle.textContent = isFake ? '❌ FAKE NEWS DETECTED' : '✅ NEWS VERIFIED AS REAL';
+            verdictDescription.textContent = result.description || 'No description available';
+            
+            // Show results first
+            resultSection.classList.add('show');
+            
+            // Play audio response automatically
+            if (result.audio_base64) {
+                console.log('Audio data received, length:', result.audio_base64.length);
+                const audioSrc = `data:audio/mpeg;base64,${result.audio_base64}`;
+                audioPlayer.src = audioSrc;
+                
+                // Load and play the audio
+                audioPlayer.load();
+                
+                // Auto-play with promise handling
+                const playPromise = audioPlayer.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            console.log('Audio playing automatically');
+                        })
+                        .catch(error => {
+                            console.warn('Auto-play prevented by browser:', error);
+                            // Show a message to user to click play
+                            showStatus('Click the play button to hear the analysis', 'info');
+                        });
+                }
+            } else {
+                console.warn('No audio data received');
+                if (result.error) {
+                    console.error('Server error:', result.error);
+                    showStatus('Analysis complete but audio unavailable', 'info');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
